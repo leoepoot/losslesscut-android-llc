@@ -85,6 +85,10 @@ class VideoEditingRepositoryImpl @Inject constructor(
         return storageUtils.createImageOutputUri(fileName)?.toString()
     }
 
+    override suspend fun createTextOutputUri(fileName: String): String? {
+        return storageUtils.createTextOutputUri(fileName, "application/json")?.toString()
+    }
+
     override fun finalizeImage(uri: String) {
         storageUtils.finalizeImage(Uri.parse(uri))
     }
@@ -95,6 +99,27 @@ class VideoEditingRepositoryImpl @Inject constructor(
 
     override fun finalizeAudio(uri: String) {
         storageUtils.finalizeAudio(Uri.parse(uri))
+    }
+
+    override fun finalizeText(uri: String) {
+        storageUtils.finalizeText(Uri.parse(uri))
+    }
+
+    override suspend fun writeTextFile(fileName: String, content: String): Result<String> = withContext(ioDispatcher) {
+        try {
+            val outputUri = storageUtils.createTextOutputUri(fileName, "application/json")
+                ?: return@withContext Result.failure(IllegalStateException("Failed to create output file"))
+
+            context.contentResolver.openOutputStream(outputUri)?.use { outputStream ->
+                outputStream.write(content.toByteArray(Charsets.UTF_8))
+            } ?: return@withContext Result.failure(IllegalStateException("Failed to open output stream"))
+
+            storageUtils.finalizeText(outputUri)
+            Result.success(outputUri.toString())
+        } catch (e: Exception) {
+            Log.e("VideoEditingRepositoryImpl", "Failed to write text file: $fileName", e)
+            Result.failure(e)
+        }
     }
 
     override suspend fun getFileName(uriString: String): String {

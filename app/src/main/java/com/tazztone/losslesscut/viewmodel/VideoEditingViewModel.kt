@@ -620,7 +620,7 @@ public class VideoEditingViewModel @Inject constructor(
         }
     }
 
-    public fun generateSegmentFile(outputDir: java.io.File) {
+    public fun generateSegmentFile() {
         if (!isExporting.compareAndSet(false, true)) return
 
         viewModelScope.launch(ioDispatcher) {
@@ -630,13 +630,13 @@ public class VideoEditingViewModel @Inject constructor(
                     currentClips
                 }
 
-                val result = useCases.generateSegmentFileUseCase.execute(clips, outputDir)
+                val result = useCases.generateSegmentFileUseCase.execute(clips)
 
                 result.fold(
-                    onSuccess = { file ->
+                    onSuccess = {
                         _uiEvents.send(
                             VideoEditingEvent.ShowToast(
-                                UiText.DynamicString(".llc saved: ${file.name}")
+                                UiText.DynamicString(".llc saved to Download/LosslessCut")
                             )
                         )
                         _uiEvents.send(VideoEditingEvent.ExportComplete(true, 1))

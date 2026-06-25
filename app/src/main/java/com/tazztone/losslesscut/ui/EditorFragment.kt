@@ -121,8 +121,7 @@ class EditorFragment : BaseEditingFragment(R.layout.fragment_editor), SettingsBo
             layoutInflater
         ) { exportType, keepAudio, keepVideo, mergeSegments, selectedTracks ->
             if (exportType == "llc") {
-                val outputDir = File(requireContext().filesDir, "llc_segments")
-                viewModel.generateSegmentFile(outputDir)
+                viewModel.generateSegmentFile()
             } else {
                 val rot = if (rotationManager.currentRotation != 0) rotationManager.currentRotation else null
                 val settings = ExportSettings(

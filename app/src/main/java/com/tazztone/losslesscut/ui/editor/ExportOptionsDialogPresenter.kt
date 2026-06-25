@@ -91,11 +91,13 @@ class ExportOptionsDialogPresenter(
         }
 
         val rbVideo = RadioButton(context).apply {
+            id = View.generateViewId()
             text = "导出视频"
             isChecked = true
         }
 
         val rbLlc = RadioButton(context).apply {
+            id = View.generateViewId()
             text = "导出 .llc 分段文件"
         }
 

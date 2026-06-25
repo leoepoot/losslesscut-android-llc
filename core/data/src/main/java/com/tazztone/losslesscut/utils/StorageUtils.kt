@@ -155,4 +155,51 @@ class StorageUtils @Inject constructor(
             }
         }
     }
+
+    suspend fun createTextOutputUri(fileName: String, mimeType: String): Uri? {
+        val customUriString = preferences.customOutputUriFlow.first()
+        if (customUriString != null) {
+            val customUri = Uri.parse(customUriString)
+            val parentDoc = DocumentFile.fromTreeUri(context, customUri)
+            if (parentDoc != null && parentDoc.exists()) {
+                val newFile = parentDoc.createFile(mimeType, fileName)
+                return newFile?.uri
+            }
+        }
+
+        val resolver = context.contentResolver
+        val collection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            MediaStore.Downloads.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+        } else {
+            @Suppress("DEPRECATION")
+            MediaStore.Files.getContentUri("external")
+        }
+
+        val relativePath = Environment.DIRECTORY_DOWNLOADS + "/LosslessCut"
+
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+            put(MediaStore.MediaColumns.MIME_TYPE, mimeType)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
+                put(MediaStore.MediaColumns.IS_PENDING, 1)
+            }
+        }
+
+        return resolver.insert(collection, contentValues)
+    }
+
+    fun finalizeText(uri: Uri) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val resolver = context.contentResolver
+            val updatedDetails = ContentValues().apply {
+                put(MediaStore.MediaColumns.IS_PENDING, 0)
+            }
+            try {
+                resolver.update(uri, updatedDetails, null, null)
+            } catch (e: UnsupportedOperationException) {
+                Log.d("StorageUtils", "Skipping IS_PENDING update for non-MediaStore URI: $uri", e)
+            }
+        }
+    }
 }

@@ -12,10 +12,13 @@ public interface IVideoEditingRepository {
     public suspend fun getFrameAt(uri: String, positionMs: Long): ByteArray?
     public suspend fun createMediaOutputUri(fileName: String, isAudio: Boolean): String?
     public suspend fun createImageOutputUri(fileName: String): String?
+    public suspend fun createTextOutputUri(fileName: String): String?
     public fun finalizeImage(uri: String)
     public fun finalizeVideo(uri: String)
     public fun finalizeAudio(uri: String)
+    public fun finalizeText(uri: String)
     public suspend fun getFileName(uriString: String): String
+    public suspend fun writeTextFile(fileName: String, content: String): Result<String>
     public suspend fun executeLosslessCut(
         inputUri: String,
         outputUri: String,
