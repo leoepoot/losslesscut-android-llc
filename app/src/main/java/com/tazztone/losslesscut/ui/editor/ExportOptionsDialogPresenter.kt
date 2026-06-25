@@ -208,5 +208,6 @@ class ExportOptionsDialogPresenter(
 
         val mergeSegments = cbMerge.isChecked
         onExport(EXPORT_TYPE_VIDEO, keepAudio, keepVideo, mergeSegments, trackList)
+        
     }
 }
