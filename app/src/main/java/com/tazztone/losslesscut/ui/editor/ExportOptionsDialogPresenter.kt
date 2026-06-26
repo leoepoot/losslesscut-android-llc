@@ -79,7 +79,7 @@ class ExportOptionsDialogPresenter(
         }
 
         val header = TextView(context).apply {
-            text = "导出方式"
+            text = context.getString(R.string.export_type_header)
             textSize = 16f
             val bottomPadding =
                 (context.resources.displayMetrics.density * DENSITY_MULTIPLIER_8).toInt()
@@ -92,13 +92,13 @@ class ExportOptionsDialogPresenter(
 
         val rbVideo = RadioButton(context).apply {
             id = View.generateViewId()
-            text = "导出视频"
+            text = context.getString(R.string.export_type_video)
             isChecked = true
         }
 
         val rbLlc = RadioButton(context).apply {
             id = View.generateViewId()
-            text = "导出 .llc 分段文件"
+            text = context.getString(R.string.export_type_llc)
         }
 
         radioGroup.addView(rbVideo)
@@ -152,7 +152,11 @@ class ExportOptionsDialogPresenter(
                 track.isAudio -> "\uD83C\uDFB5"
                 else -> "\uD83D\uDCC4"
             }
-            val type = if (track.isVideo) "Video" else if (track.isAudio) "Audio" else "Other"
+            val type = when {
+                track.isVideo -> context.getString(R.string.track_type_video)
+                track.isAudio -> context.getString(R.string.track_type_audio)
+                else -> context.getString(R.string.track_type_other)
+            }
             val typeWithEmoji = "$emoji $type"
 
             val langInfo = if (!track.language.isNullOrBlank()) " — ${track.language}" else ""
