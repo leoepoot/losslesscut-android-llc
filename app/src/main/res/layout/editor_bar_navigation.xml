@@ -27,26 +27,6 @@
         android:tooltipText="@string/add_video"
         app:tint="?attr/colorOnSurface"/>
 
-    <ImageButton
-        android:id="@+id/btnUndo"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:src="@drawable/ic_undo_24"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="@string/undo"
-        android:tooltipText="@string/undo"
-        app:tint="?attr/colorOnSurface"/>
-
-    <ImageButton
-        android:id="@+id/btnRedo"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:src="@drawable/ic_redo_24"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="@string/redo"
-        android:tooltipText="@string/redo"
-        app:tint="?attr/colorOnSurface"/>
-
     <View
         android:layout_width="0dp"
         android:layout_height="0dp"

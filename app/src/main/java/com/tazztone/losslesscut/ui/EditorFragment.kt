@@ -141,13 +141,8 @@ class EditorFragment : BaseEditingFragment(R.layout.fragment_editor), SettingsBo
             }
         )
 
-        rotationManager = RotationManager(
-            badgeRotate = binding.editingControls.badgeRotate,
-            btnRotate = binding.editingControls.btnRotate,
-            tvRotateEmoji = binding.editingControls.tvRotateEmoji,
-            btnRotateContainer = binding.editingControls.btnRotateContainer,
-            playerView = binding.playerSection.playerView
-        )
+        // rotationManager disabled - rotate button removed from layout
+        // rotationManager = RotationManager(...)
 
         shortcutHandler = ShortcutHandler(
             viewModel = viewModel,
@@ -247,7 +242,7 @@ class EditorFragment : BaseEditingFragment(R.layout.fragment_editor), SettingsBo
         binding.playlistArea.rvClips.let { itemTouchHelper.attachToRecyclerView(it) }
 
         binding.playerSection.btnPlayPause.setOnClickListener { playerManager.togglePlayback() }
-        binding.playerSection.btnPlayPauseControls.setOnClickListener { playerManager.togglePlayback() }
+        binding.btnPlayPauseRow.setOnClickListener { playerManager.togglePlayback() }
         binding.playerSection.playerView.setOnClickListener { playerManager.togglePlayback() }
 
         binding.navBar.btnHome.setOnClickListener { activity?.onBackPressedDispatcher?.onBackPressed() }
@@ -258,8 +253,8 @@ class EditorFragment : BaseEditingFragment(R.layout.fragment_editor), SettingsBo
                 exportOptionsController.show(state)
             }
         }
-        binding.navBar.btnUndo.setOnClickListener { viewModel.undo() }
-        binding.navBar.btnRedo.setOnClickListener { viewModel.redo() }
+        binding.btnUndoRow.setOnClickListener { viewModel.undo() }
+        binding.btnRedoRow.setOnClickListener { viewModel.redo() }
         
         binding.navBar.btnSettings.setOnClickListener {
             playerManager.pause()
@@ -276,11 +271,10 @@ class EditorFragment : BaseEditingFragment(R.layout.fragment_editor), SettingsBo
         binding.editingControls.btnSplit.setOnClickListener { splitCurrentSegment() }
         binding.editingControls.containerSplit.setOnClickListener { splitCurrentSegment() }
         
-        binding.editingControls.btnRotateContainer.setOnClickListener { rotationManager.rotate(90) }
-        binding.editingControls.containerRotate.setOnClickListener { rotationManager.rotate(90) }
+        // rotate buttons removed from layout
 
-        binding.playerSection.btnPlaybackSpeed.setOnClickListener { playerManager.cyclePlaybackSpeed() }
-        binding.playerSection.btnPlaybackSpeed.setOnLongClickListener {
+        binding.tvSpeedRow.setOnClickListener { playerManager.cyclePlaybackSpeed() }
+        binding.tvSpeedRow.setOnLongClickListener {
             val isEnabled = playerManager.togglePitchCorrection()
             val msgRes = if (isEnabled) R.string.pitch_correction_on else R.string.pitch_correction_off
             Toast.makeText(requireContext(), msgRes, Toast.LENGTH_SHORT).show()
@@ -301,17 +295,12 @@ class EditorFragment : BaseEditingFragment(R.layout.fragment_editor), SettingsBo
             }
         }
 
-        binding.editingControls.btnSmartCut.setOnClickListener {
-            playerManager.pause()
-            smartCutController.show()
-        }
-        binding.editingControls.containerSmartCut.setOnClickListener {
-            playerManager.pause()
-            smartCutController.show()
-        }
+        // smart cut buttons removed from layout
 
-        binding.playerSection.btnNudgeBack.setOnClickListener { playerManager.seekToKeyframe(-1) }
-        binding.playerSection.btnNudgeForward.setOnClickListener { playerManager.seekToKeyframe(1) }
+        binding.editingControls.btnPrevFrame.setOnClickListener { playerManager.seekToKeyframe(-1) }
+        binding.editingControls.containerPrevFrame.setOnClickListener { playerManager.seekToKeyframe(-1) }
+        binding.editingControls.btnNextFrame.setOnClickListener { playerManager.seekToKeyframe(1) }
+        binding.editingControls.containerNextFrame.setOnClickListener { playerManager.seekToKeyframe(1) }
     }
 
     private fun setupCustomSeeker() {
@@ -406,10 +395,10 @@ class EditorFragment : BaseEditingFragment(R.layout.fragment_editor), SettingsBo
         binding.seekerContainer.customVideoSeeker.setKeyframes(state.keyframes)
         binding.seekerContainer.customVideoSeeker.setSegments(state.segments, state.selectedSegmentId)
         binding.seekerContainer.customVideoSeeker.detectionPreviewRanges = state.detectionPreviewRanges
-        binding.navBar.btnUndo.isEnabled = state.canUndo
-        binding.navBar.btnUndo.alpha = if (state.canUndo) 1.0f else 0.5f
-        binding.navBar.btnRedo.isEnabled = state.canRedo
-        binding.navBar.btnRedo.alpha = if (state.canRedo) 1.0f else 0.5f
+        binding.btnUndoRow.isEnabled = state.canUndo
+        binding.btnUndoRow.alpha = if (state.canUndo) 1.0f else 0.5f
+        binding.btnRedoRow.isEnabled = state.canRedo
+        binding.btnRedoRow.alpha = if (state.canRedo) 1.0f else 0.5f
 
         val selectedSeg = state.segments.find { it.id == state.selectedSegmentId }
         val deleteIcon = if (selectedSeg?.action == SegmentAction.DISCARD) {
@@ -439,7 +428,7 @@ class EditorFragment : BaseEditingFragment(R.layout.fragment_editor), SettingsBo
         if (total <= 0) return
         val currentStr = TimeUtils.formatDuration(current)
         val totalStr = TimeUtils.formatDuration(total)
-        binding.playerSection.tvDuration.text = getString(R.string.duration_format, currentStr, totalStr)
+        binding.tvDurationRow.text = getString(R.string.duration_format, currentStr, totalStr)
     }
 
     private fun updatePlaybackIcons() {
@@ -447,7 +436,7 @@ class EditorFragment : BaseEditingFragment(R.layout.fragment_editor), SettingsBo
         val iconRes = if (isPlaying) R.drawable.ic_pause_24 else R.drawable.ic_play_24
         
         binding.playerSection.btnPlayPause.setImageResource(iconRes)
-        binding.playerSection.btnPlayPauseControls.setImageResource(iconRes)
+        binding.btnPlayPauseRow.setImageResource(iconRes)
 
         // Animate central play/pause button visibility
         if (isPlaying) {
@@ -467,7 +456,7 @@ class EditorFragment : BaseEditingFragment(R.layout.fragment_editor), SettingsBo
 
     private fun updatePlaybackSpeedUI(speed: Float) {
         val formatted = if (speed % 1f == 0f) "${speed.toInt()}x" else String.format("%.2gx", speed)
-        binding.playerSection.btnPlaybackSpeed.text = formatted
+        binding.tvSpeedRow.text = formatted
     }
 
     private fun splitCurrentSegment() {
