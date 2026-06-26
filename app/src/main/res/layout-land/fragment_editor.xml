@@ -66,6 +66,69 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
+        <!-- Playback Control Row (between seeker and player) -->
+        <LinearLayout
+            android:id="@+id/playbackControlRow"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="8dp"
+            android:background="?attr/colorSurface"
+            app:layout_constraintBottom_toTopOf="@id/seekerContainer"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <ImageButton
+                android:id="@+id/btnUndoRow"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_undo_24"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="?attr/colorOnSurface"/>
+
+            <ImageButton
+                android:id="@+id/btnRedoRow"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_redo_24"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="?attr/colorOnSurface"/>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/tvDurationRow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="00:00.000 / 00:00.000"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="14sp"
+                android:paddingEnd="8dp"/>
+
+            <TextView
+                android:id="@+id/tvSpeedRow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1x"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="14sp"
+                android:paddingEnd="12dp"
+                android:clickable="true"
+                android:focusable="true"/>
+
+            <ImageButton
+                android:id="@+id/btnPlayPauseRow"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_play_24"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="?attr/colorOnSurface"/>
+        </LinearLayout>
+
         <!-- Center Area: Player + Overlays (Dynamic sharing) -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
@@ -73,7 +136,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/seekerContainer">
+            app:layout_constraintBottom_toTopOf="@id/playbackControlRow">
 
             <!-- Guideline for 50/50 split -->
             <androidx.constraintlayout.widget.Guideline
@@ -134,4 +197,3 @@
         android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
