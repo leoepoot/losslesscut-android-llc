@@ -276,8 +276,8 @@ class EditorFragment : BaseEditingFragment(R.layout.fragment_editor), SettingsBo
         binding.editingControls.btnSplit.setOnClickListener { splitCurrentSegment() }
         binding.editingControls.containerSplit.setOnClickListener { splitCurrentSegment() }
         
-        binding.editingControls.btnRotateContainer.setOnClickListener { rotationManager.rotate(90) }
-        binding.editingControls.containerRotate.setOnClickListener { rotationManager.rotate(90) }
+        binding.editingControls.btnRotateContainer?.setOnClickListener { rotationManager.rotate(90) }
+        binding.editingControls.containerRotate?.setOnClickListener { rotationManager.rotate(90) }
 
         binding.tvSpeedRow.setOnClickListener { playerManager.cyclePlaybackSpeed() }
         binding.tvSpeedRow.setOnLongClickListener {
@@ -301,11 +301,11 @@ class EditorFragment : BaseEditingFragment(R.layout.fragment_editor), SettingsBo
             }
         }
 
-        binding.editingControls.btnSmartCut.setOnClickListener {
+        binding.editingControls.btnSmartCut?.setOnClickListener {
             playerManager.pause()
             smartCutController.show()
         }
-        binding.editingControls.containerSmartCut.setOnClickListener {
+        binding.editingControls.containerSmartCut?.setOnClickListener {
             playerManager.pause()
             smartCutController.show()
         }
