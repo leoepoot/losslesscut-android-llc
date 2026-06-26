@@ -169,7 +169,7 @@ class StorageUtils @Inject constructor(
 
         val resolver = context.contentResolver
         val collection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            MediaStore.Downloads.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+            MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
         } else {
             @Suppress("DEPRECATION")
             MediaStore.Files.getContentUri("external")
