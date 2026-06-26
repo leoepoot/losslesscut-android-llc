@@ -141,8 +141,13 @@ class EditorFragment : BaseEditingFragment(R.layout.fragment_editor), SettingsBo
             }
         )
 
-        // rotationManager disabled - rotate button removed from layout
-        // rotationManager = RotationManager(...)
+        rotationManager = RotationManager(
+            badgeRotate = binding.editingControls.badgeRotate,
+            btnRotate = binding.editingControls.btnRotate,
+            tvRotateEmoji = binding.editingControls.tvRotateEmoji,
+            btnRotateContainer = binding.editingControls.btnRotateContainer,
+            playerView = binding.playerSection.playerView
+        )
 
         shortcutHandler = ShortcutHandler(
             viewModel = viewModel,
@@ -271,7 +276,8 @@ class EditorFragment : BaseEditingFragment(R.layout.fragment_editor), SettingsBo
         binding.editingControls.btnSplit.setOnClickListener { splitCurrentSegment() }
         binding.editingControls.containerSplit.setOnClickListener { splitCurrentSegment() }
         
-        // rotate buttons removed from layout
+        binding.editingControls.btnRotateContainer.setOnClickListener { rotationManager.rotate(90) }
+        binding.editingControls.containerRotate.setOnClickListener { rotationManager.rotate(90) }
 
         binding.tvSpeedRow.setOnClickListener { playerManager.cyclePlaybackSpeed() }
         binding.tvSpeedRow.setOnLongClickListener {
@@ -295,7 +301,14 @@ class EditorFragment : BaseEditingFragment(R.layout.fragment_editor), SettingsBo
             }
         }
 
-        // smart cut buttons removed from layout
+        binding.editingControls.btnSmartCut.setOnClickListener {
+            playerManager.pause()
+            smartCutController.show()
+        }
+        binding.editingControls.containerSmartCut.setOnClickListener {
+            playerManager.pause()
+            smartCutController.show()
+        }
 
         binding.editingControls.btnPrevFrame.setOnClickListener { playerManager.seekToKeyframe(-1) }
         binding.editingControls.containerPrevFrame.setOnClickListener { playerManager.seekToKeyframe(-1) }
