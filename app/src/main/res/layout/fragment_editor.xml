@@ -65,6 +65,11 @@
             android:textColor="?attr/colorOnSurface"
             android:textSize="14sp"
             android:paddingEnd="8dp"/>
+        
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
 
         <TextView
             android:id="@+id/tvSpeedRow"
@@ -91,8 +96,8 @@
         android:id="@+id/seekerContainer"
         layout="@layout/editor_timeline"
         android:layout_width="0dp"
-        android:layout_height="120dp"
-        android:layout_marginBottom="16dp"
+        android:layout_height="105dp"
+        android:layout_marginBottom="52dp"
         app:layout_constraintBottom_toTopOf="@id/bottomActionContainer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
