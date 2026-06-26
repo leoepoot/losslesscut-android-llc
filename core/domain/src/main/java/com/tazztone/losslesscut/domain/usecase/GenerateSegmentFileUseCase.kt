@@ -62,7 +62,7 @@ private fun deriveLlcFileName(mediaFileName: String): String {
     } else {
         mediaFileName
     }
-    return "$baseName.llc"
+    return "${baseName}_merged.llc"
 }
 
 public class GenerateSegmentFileUseCase @Inject constructor(

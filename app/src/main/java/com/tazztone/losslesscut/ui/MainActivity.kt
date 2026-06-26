@@ -61,6 +61,7 @@ class MainActivity : BaseActivity() {
                 iconResId = R.drawable.ic_add_24,
                 isPrimary = true
             ),
+/*
             DashboardAction(
                 id = "remux",
                 title = getString(R.string.dashboard_remux_title),
@@ -73,6 +74,7 @@ class MainActivity : BaseActivity() {
                 description = getString(R.string.dashboard_metadata_desc),
                 iconResId = R.drawable.ic_settings_24
             )
+*/
         )
 
         binding.rvDashboard.adapter = DashboardAdapter(actions) { action ->
