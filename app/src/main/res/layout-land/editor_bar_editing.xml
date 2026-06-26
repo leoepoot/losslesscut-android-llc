@@ -24,11 +24,13 @@
             android:layout_height="48dp"
             android:src="@drawable/ic_skip_previous_24"
             android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/prev_frame_desc"
+            android:tooltipText="@string/prev_frame_desc"
             app:tint="?attr/colorOnSurface"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="上一帧"
+            android:text="@string/prev_frame"
             android:textSize="10sp"
             android:textColor="?attr/colorOnSurfaceVariant"/>
     </LinearLayout>
@@ -48,11 +50,13 @@
             android:layout_height="48dp"
             android:src="@drawable/ic_skip_next_24"
             android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/next_frame_desc"
+            android:tooltipText="@string/next_frame_desc"
             app:tint="?attr/colorOnSurface"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="下一帧"
+            android:text="@string/next_frame"
             android:textSize="10sp"
             android:textColor="?attr/colorOnSurfaceVariant"/>
     </LinearLayout>

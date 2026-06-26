@@ -185,6 +185,10 @@
     <string name="error_visual_on_audio">音频文件不支持画面检测</string>
     <string name="short_in">起点</string>
     <string name="short_out">终点</string>
+    <string name="prev_frame">上一帧</string>
+    <string name="next_frame">下一帧</string>
+    <string name="prev_frame_desc">跳转到上一关键帧</string>
+    <string name="next_frame_desc">跳转到下一关键帧</string>
     <string name="redo">重做</string>
     <string name="export_type_header">导出方式</string>
     <string name="export_type_video">导出视频</string>
