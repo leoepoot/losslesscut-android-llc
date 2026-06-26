@@ -92,6 +92,7 @@
         layout="@layout/editor_timeline"
         android:layout_width="0dp"
         android:layout_height="120dp"
+        android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toTopOf="@id/bottomActionContainer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
