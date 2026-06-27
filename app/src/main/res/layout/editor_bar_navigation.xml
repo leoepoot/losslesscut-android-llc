@@ -57,9 +57,18 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:src="@drawable/ic_export_24"
-        android:background="@drawable/rounded_button"
         android:contentDescription="@string/export"
         android:tooltipText="@string/export"
         app:tint="?attr/colorOnPrimary"/>
+    
+    <!-- <ImageButton
+        android:id="@+id/btnExport"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_export_24"
+        android:background="@drawable/rounded_button"
+        android:contentDescription="@string/export"
+        android:tooltipText="@string/export"
+        app:tint="?attr/colorOnPrimary"/> -->
 
 </LinearLayout>
