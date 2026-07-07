@@ -112,7 +112,16 @@ class VideoEditingRepositoryImpl @Inject constructor(
                 input.bufferedReader().use { it.readText() }
             } ?: return@withContext Result.failure(IllegalStateException("Failed to open input stream"))
             Result.success(content)
-        } catch (e: Exception) {
+        } catch (e: java.io.FileNotFoundException) {
+            Log.e("VideoEditingRepositoryImpl", "Failed to read text file: $uri", e)
+            Result.failure(e)
+        } catch (e: java.io.IOException) {
+            Log.e("VideoEditingRepositoryImpl", "Failed to read text file: $uri", e)
+            Result.failure(e)
+        } catch (e: SecurityException) {
+            Log.e("VideoEditingRepositoryImpl", "Failed to read text file: $uri", e)
+            Result.failure(e)
+        } catch (e: NullPointerException) {
             Log.e("VideoEditingRepositoryImpl", "Failed to read text file: $uri", e)
             Result.failure(e)
         }

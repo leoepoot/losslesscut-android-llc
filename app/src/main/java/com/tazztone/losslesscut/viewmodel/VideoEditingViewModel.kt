@@ -43,6 +43,7 @@ public class VideoEditingViewModel @Inject constructor(
     private val repository: IVideoEditingRepository,
     private val preferences: AppPreferences,
     private val useCases: VideoEditingUseCases,
+    private val llcLoadController: LlcLoadController,
     @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
@@ -163,8 +164,14 @@ public class VideoEditingViewModel @Inject constructor(
                             currentClips = clips
                             selectedClipIndex = 0
 
-                            val llcApplied = tryLoadAndApplyLlc(clips)
-                            if (llcApplied) {
+                            val llcState = llcLoadController.tryLoadAndApplyLlc(clips)
+                            if (llcState != null) {
+                                currentClips = llcState.clips
+                                selectedClipIndex = llcState.selectedClipIndex
+                                selectedSegmentId = llcState.selectedSegmentId
+                                currentPlaybackSpeed = llcState.playbackSpeed
+                                isPitchCorrectionEnabled = llcState.isPitchCorrectionEnabled
+                                lastMinSegmentMs = llcState.lastMinSegmentMs
                                 _uiEvents.send(VideoEditingEvent.ShowToast(UiText.DynamicString("工程状态已恢复")))
                             }
 
@@ -185,49 +192,6 @@ public class VideoEditingViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    private suspend fun tryLoadAndApplyLlc(clips: List<MediaClip>): Boolean = withContext(ioDispatcher) {
-        val firstClip = clips.firstOrNull() ?: return@withContext false
-
-        val llcUri = useCases.generateSegmentFileUseCase.findLlcForMedia(firstClip.fileName)
-            ?: return@withContext false
-
-        val llcResult = useCases.generateSegmentFileUseCase.loadLlcProject(llcUri)
-        val llcData = llcResult.getOrNull() ?: return@withContext false
-
-        val baseNameToLlcClip = llcData.clips.associateBy {
-            it.fileName.substringBeforeLast('.')
-        }
-
-        val mergedClips = clips.map { clip ->
-            val clipBaseName = clip.fileName.substringBeforeLast('.')
-            val matchingLlcClip = baseNameToLlcClip[clipBaseName]
-            if (matchingLlcClip != null) {
-                val validatedSegments = matchingLlcClip.segments.map { segment ->
-                    segment.copy(
-                        startMs = segment.startMs.coerceIn(0L, clip.durationMs),
-                        endMs = segment.endMs.coerceIn(0L, clip.durationMs)
-                    )
-                }.filter { it.startMs < it.endMs }
-                if (validatedSegments.isNotEmpty()) {
-                    clip.copy(segments = validatedSegments)
-                } else {
-                    clip
-                }
-            } else {
-                clip
-            }
-        }
-
-        currentClips = mergedClips
-        selectedClipIndex = llcData.selectedClipIndex.coerceIn(0, mergedClips.size - 1)
-        selectedSegmentId = llcData.selectedSegmentId
-        currentPlaybackSpeed = llcData.playbackSpeed
-        isPitchCorrectionEnabled = llcData.isPitchCorrectionEnabled
-        lastMinSegmentMs = llcData.lastMinSegmentMs
-
-        return@withContext true
     }
 
     private suspend fun loadClipDataInternal(index: Int) {

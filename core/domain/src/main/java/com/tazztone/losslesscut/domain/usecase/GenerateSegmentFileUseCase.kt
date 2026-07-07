@@ -7,6 +7,7 @@ import com.tazztone.losslesscut.domain.repository.IVideoEditingRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.util.UUID
@@ -49,7 +50,9 @@ private fun parseLlcContent(jsonContent: String): Result<LlcProjectData> {
         }
         val data = json.decodeFromString<LlcProjectData>(jsonContent)
         Result.success(data)
-    } catch (e: Exception) {
+    } catch (e: SerializationException) {
+        Result.failure(e)
+    } catch (e: IllegalArgumentException) {
         Result.failure(e)
     }
 }
