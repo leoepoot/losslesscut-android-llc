@@ -29,10 +29,10 @@ class MainActivity : BaseActivity() {
     private var pendingLaunchMode = VideoEditingActivity.MODE_CUT
 
     private val selectMediaLauncher =
-        registerForActivityResult(ActivityResultContracts.OpenMultipleDocuments()) { uris: List<Uri> ->
-            if (uris.isNotEmpty()) {
-                Log.d("MediaSelection", "Media selected: $uris")
-                navigateToEditingScreen(uris)
+        registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
+            if (uri != null) {
+                Log.d("MediaSelection", "Media selected: $uri")
+                navigateToEditingScreen(listOf(uri))
             } else {
                 Log.e("MediaSelectionError", "No media selected")
             }

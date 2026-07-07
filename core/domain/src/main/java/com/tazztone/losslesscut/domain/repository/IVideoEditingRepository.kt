@@ -45,4 +45,6 @@ public interface IVideoEditingRepository {
         onProgress: ((WaveformResult) -> Unit)? = null
     ): WaveformResult?
     public suspend fun writeSnapshot(bitmap: ByteArray, outputUri: String, format: String, quality: Int): Boolean
+    public suspend fun readTextFile(uri: String): Result<String>
+    public suspend fun findTextFileByName(fileName: String): String?
 }

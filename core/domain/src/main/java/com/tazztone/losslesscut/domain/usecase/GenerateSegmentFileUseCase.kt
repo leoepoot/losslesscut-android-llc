@@ -41,6 +41,19 @@ private fun generateLlcContent(projectData: LlcProjectData): String {
     return json.encodeToString(projectData)
 }
 
+private fun parseLlcContent(jsonContent: String): Result<LlcProjectData> {
+    return try {
+        val json = Json {
+            ignoreUnknownKeys = true
+            encodeDefaults = true
+        }
+        val data = json.decodeFromString<LlcProjectData>(jsonContent)
+        Result.success(data)
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+}
+
 public class GenerateSegmentFileUseCase @Inject constructor(
     private val repository: IVideoEditingRepository,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
@@ -54,5 +67,18 @@ public class GenerateSegmentFileUseCase @Inject constructor(
         val content = generateLlcContent(projectData)
         val fileName = deriveLlcFileName(projectData.clips.first().fileName)
         repository.writeTextFile(fileName, content)
+    }
+
+    public suspend fun findLlcForMedia(mediaFileName: String): String? = withContext(ioDispatcher) {
+        val llcFileName = deriveLlcFileName(mediaFileName)
+        repository.findTextFileByName(llcFileName)
+    }
+
+    public suspend fun loadLlcProject(llcUri: String): Result<LlcProjectData> = withContext(ioDispatcher) {
+        val textResult = repository.readTextFile(llcUri)
+        textResult.fold(
+            onSuccess = { jsonContent -> parseLlcContent(jsonContent) },
+            onFailure = { Result.failure(it) }
+        )
     }
 }

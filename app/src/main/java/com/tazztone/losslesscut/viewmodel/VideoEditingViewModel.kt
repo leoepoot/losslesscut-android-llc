@@ -162,6 +162,12 @@ public class VideoEditingViewModel @Inject constructor(
                         onSuccess = { clips ->
                             currentClips = clips
                             selectedClipIndex = 0
+
+                            val llcApplied = tryLoadAndApplyLlc(clips)
+                            if (llcApplied) {
+                                _uiEvents.send(VideoEditingEvent.ShowToast(UiText.DynamicString("工程状态已恢复")))
+                            }
+
                             loadClipDataInternal(selectedClipIndex)
                         },
                         onFailure = { e ->
@@ -179,6 +185,49 @@ public class VideoEditingViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private suspend fun tryLoadAndApplyLlc(clips: List<MediaClip>): Boolean = withContext(ioDispatcher) {
+        val firstClip = clips.firstOrNull() ?: return@withContext false
+
+        val llcUri = useCases.generateSegmentFileUseCase.findLlcForMedia(firstClip.fileName)
+            ?: return@withContext false
+
+        val llcResult = useCases.generateSegmentFileUseCase.loadLlcProject(llcUri)
+        val llcData = llcResult.getOrNull() ?: return@withContext false
+
+        val baseNameToLlcClip = llcData.clips.associateBy {
+            it.fileName.substringBeforeLast('.')
+        }
+
+        val mergedClips = clips.map { clip ->
+            val clipBaseName = clip.fileName.substringBeforeLast('.')
+            val matchingLlcClip = baseNameToLlcClip[clipBaseName]
+            if (matchingLlcClip != null) {
+                val validatedSegments = matchingLlcClip.segments.map { segment ->
+                    segment.copy(
+                        startMs = segment.startMs.coerceIn(0L, clip.durationMs),
+                        endMs = segment.endMs.coerceIn(0L, clip.durationMs)
+                    )
+                }.filter { it.startMs < it.endMs }
+                if (validatedSegments.isNotEmpty()) {
+                    clip.copy(segments = validatedSegments)
+                } else {
+                    clip
+                }
+            } else {
+                clip
+            }
+        }
+
+        currentClips = mergedClips
+        selectedClipIndex = llcData.selectedClipIndex.coerceIn(0, mergedClips.size - 1)
+        selectedSegmentId = llcData.selectedSegmentId
+        currentPlaybackSpeed = llcData.playbackSpeed
+        isPitchCorrectionEnabled = llcData.isPitchCorrectionEnabled
+        lastMinSegmentMs = llcData.lastMinSegmentMs
+
+        return@withContext true
     }
 
     private suspend fun loadClipDataInternal(index: Int) {

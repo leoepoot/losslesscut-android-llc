@@ -105,6 +105,23 @@ class VideoEditingRepositoryImpl @Inject constructor(
         storageUtils.finalizeText(Uri.parse(uri))
     }
 
+    override suspend fun readTextFile(uri: String): Result<String> = withContext(ioDispatcher) {
+        try {
+            val parsedUri = Uri.parse(uri)
+            val content = context.contentResolver.openInputStream(parsedUri)?.use { input ->
+                input.bufferedReader().use { it.readText() }
+            } ?: return@withContext Result.failure(IllegalStateException("Failed to open input stream"))
+            Result.success(content)
+        } catch (e: Exception) {
+            Log.e("VideoEditingRepositoryImpl", "Failed to read text file: $uri", e)
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun findTextFileByName(fileName: String): String? {
+        return storageUtils.findTextFileByName(fileName)?.toString()
+    }
+
     override suspend fun writeTextFile(fileName: String, content: String): Result<String> = withContext(ioDispatcher) {
         try {
             val outputUri = storageUtils.createTextOutputUri(fileName, "application/json")
