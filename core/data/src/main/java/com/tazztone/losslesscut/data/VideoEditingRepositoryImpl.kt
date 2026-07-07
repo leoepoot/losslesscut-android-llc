@@ -108,9 +108,11 @@ class VideoEditingRepositoryImpl @Inject constructor(
     override suspend fun readTextFile(uri: String): Result<String> = withContext(ioDispatcher) {
         try {
             val parsedUri = Uri.parse(uri)
-            val content = context.contentResolver.openInputStream(parsedUri)?.use { input ->
+            val inputStream = context.contentResolver.openInputStream(parsedUri)
+                ?: return@withContext Result.failure(IllegalStateException("Failed to open input stream"))
+            val content = inputStream.use { input ->
                 input.bufferedReader().use { it.readText() }
-            } ?: return@withContext Result.failure(IllegalStateException("Failed to open input stream"))
+            }
             Result.success(content)
         } catch (e: java.io.FileNotFoundException) {
             Log.e("VideoEditingRepositoryImpl", "Failed to read text file: $uri", e)
@@ -119,9 +121,6 @@ class VideoEditingRepositoryImpl @Inject constructor(
             Log.e("VideoEditingRepositoryImpl", "Failed to read text file: $uri", e)
             Result.failure(e)
         } catch (e: SecurityException) {
-            Log.e("VideoEditingRepositoryImpl", "Failed to read text file: $uri", e)
-            Result.failure(e)
-        } catch (e: NullPointerException) {
             Log.e("VideoEditingRepositoryImpl", "Failed to read text file: $uri", e)
             Result.failure(e)
         }
