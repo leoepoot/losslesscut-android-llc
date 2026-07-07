@@ -46,30 +46,13 @@ public class GenerateSegmentFileUseCase @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
 
-    public suspend fun execute(
-        clips: List<MediaClip>,
-        selectedClipIndex: Int,
-        selectedSegmentId: UUID?,
-        playbackSpeed: Float,
-        isPitchCorrectionEnabled: Boolean,
-        lastMinSegmentMs: Long
-    ): Result<String> = withContext(ioDispatcher) {
-        if (clips.isEmpty()) {
+    public suspend fun execute(projectData: LlcProjectData): Result<String> = withContext(ioDispatcher) {
+        if (projectData.clips.isEmpty()) {
             return@withContext Result.failure(IllegalStateException("No media clips available"))
         }
 
-        val projectData = LlcProjectData(
-            savedAt = java.time.Instant.now().toString(),
-            selectedClipIndex = selectedClipIndex,
-            selectedSegmentId = selectedSegmentId,
-            playbackSpeed = playbackSpeed,
-            isPitchCorrectionEnabled = isPitchCorrectionEnabled,
-            lastMinSegmentMs = lastMinSegmentMs,
-            clips = clips
-        )
-
         val content = generateLlcContent(projectData)
-        val fileName = deriveLlcFileName(clips.first().fileName)
+        val fileName = deriveLlcFileName(projectData.clips.first().fileName)
         repository.writeTextFile(fileName, content)
     }
 }

@@ -202,4 +202,41 @@ class StorageUtils @Inject constructor(
             }
         }
     }
+
+    suspend fun findTextFileByName(fileName: String): Uri? = withContext(ioDispatcher) {
+        val customUriString = preferences.customOutputUriFlow.first()
+        if (customUriString != null) {
+            val customUri = Uri.parse(customUriString)
+            val parentDoc = DocumentFile.fromTreeUri(context, customUri)
+            if (parentDoc != null && parentDoc.exists()) {
+                val existingFile = parentDoc.findFile(fileName)
+                if (existingFile != null && existingFile.exists()) {
+                    return@withContext existingFile.uri
+                }
+            }
+        }
+
+        val resolver = context.contentResolver
+        val collection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+        } else {
+            @Suppress("DEPRECATION")
+            MediaStore.Files.getContentUri("external")
+        }
+
+        val projection = arrayOf(MediaStore.MediaColumns._ID, MediaStore.MediaColumns.DISPLAY_NAME)
+        val selection = "${MediaStore.MediaColumns.DISPLAY_NAME} = ?"
+        val selectionArgs = arrayOf(fileName)
+
+        resolver.query(collection, projection, selection, selectionArgs, null)?.use { cursor ->
+            if (cursor.moveToFirst()) {
+                val idIndex = cursor.getColumnIndex(MediaStore.MediaColumns._ID)
+                if (idIndex != -1) {
+                    val id = cursor.getLong(idIndex)
+                    return@withContext Uri.withAppendedPath(collection, id.toString())
+                }
+            }
+        }
+        return@withContext null
+    }
 }

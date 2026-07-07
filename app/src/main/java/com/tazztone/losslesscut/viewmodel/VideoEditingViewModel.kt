@@ -25,7 +25,9 @@ import com.tazztone.losslesscut.domain.usecase.SessionUseCase
 import com.tazztone.losslesscut.domain.usecase.SilenceDetectionUseCase
 import com.tazztone.losslesscut.domain.usecase.SegmentDetectorUseCase
 import com.tazztone.losslesscut.domain.usecase.GenerateSegmentFileUseCase
+import com.tazztone.losslesscut.domain.usecase.LlcProjectData
 import com.tazztone.losslesscut.domain.usecase.VisualDetectionListener
+import java.util.UUID
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
@@ -625,12 +627,20 @@ public class VideoEditingViewModel @Inject constructor(
 
         viewModelScope.launch(ioDispatcher) {
             try {
-                val clips = stateMutex.withLock {
+                val projectData = stateMutex.withLock {
                     _uiState.value = VideoEditingUiState.Loading()
-                    currentClips
+                    LlcProjectData(
+                        savedAt = java.time.Instant.now().toString(),
+                        selectedClipIndex = selectedClipIndex,
+                        selectedSegmentId = selectedSegmentId,
+                        playbackSpeed = currentPlaybackSpeed,
+                        isPitchCorrectionEnabled = isPitchCorrectionEnabled,
+                        lastMinSegmentMs = lastMinSegmentMs,
+                        clips = currentClips
+                    )
                 }
 
-                val result = useCases.generateSegmentFileUseCase.execute(clips)
+                val result = useCases.generateSegmentFileUseCase.execute(projectData)
 
                 result.fold(
                     onSuccess = {
