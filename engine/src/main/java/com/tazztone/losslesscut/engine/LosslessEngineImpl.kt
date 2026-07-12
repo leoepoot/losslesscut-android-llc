@@ -52,8 +52,8 @@ class LosslessEngineImpl @Inject constructor(
 
     companion object {
         private const val TAG = "LosslessEngine"
-        private const val MAX_KEYFRAME_COUNT = 3000
-        private const val MAX_PROBE_SAMPLES = 15000
+        private const val MAX_KEYFRAME_COUNT = 50000
+        private const val MAX_PROBE_SAMPLES = 500000
         private const val DEFAULT_FPS = 30f
         private const val SNAPSHOT_QUALITY = 90
         private const val AUDIO_SAMPLE_RATE_44100 = 44100
