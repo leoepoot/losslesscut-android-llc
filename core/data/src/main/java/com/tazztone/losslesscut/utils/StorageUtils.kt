@@ -203,6 +203,32 @@ class StorageUtils @Inject constructor(
         }
     }
 
+    suspend fun deleteTextFile(uri: Uri): Result<Unit> = withContext(ioDispatcher) {
+        try {
+            val docFile = DocumentFile.fromSingleUri(context, uri)
+            if (docFile != null && docFile.exists()) {
+                if (docFile.delete()) {
+                    return@withContext Result.success(Unit)
+                }
+            }
+            val deleted = context.contentResolver.delete(uri, null, null)
+            if (deleted > 0) {
+                Result.success(Unit)
+            } else {
+                Result.failure(IllegalStateException("Failed to delete file: delete() returned 0"))
+            }
+        } catch (e: SecurityException) {
+            Log.e("StorageUtils", "SecurityException deleting file: $uri", e)
+            Result.failure(e)
+        } catch (e: UnsupportedOperationException) {
+            Log.e("StorageUtils", "UnsupportedOperationException deleting file: $uri", e)
+            Result.failure(e)
+        } catch (e: IllegalArgumentException) {
+            Log.e("StorageUtils", "IllegalArgumentException deleting file: $uri", e)
+            Result.failure(e)
+        }
+    }
+
     suspend fun findTextFileByName(fileName: String): Uri? = withContext(ioDispatcher) {
         val customUriString = preferences.customOutputUriFlow.first()
         if (customUriString != null) {

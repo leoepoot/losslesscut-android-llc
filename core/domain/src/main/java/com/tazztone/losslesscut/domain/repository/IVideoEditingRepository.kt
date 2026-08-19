@@ -47,4 +47,5 @@ public interface IVideoEditingRepository {
     public suspend fun writeSnapshot(bitmap: ByteArray, outputUri: String, format: String, quality: Int): Boolean
     public suspend fun readTextFile(uri: String): Result<String>
     public suspend fun findTextFileByName(fileName: String): String?
+    public suspend fun deleteTextFile(uri: String): Result<Unit>
 }

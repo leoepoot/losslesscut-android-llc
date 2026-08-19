@@ -577,7 +577,7 @@ public class VideoEditingViewModel @Inject constructor(
         }
     }
 
-    public fun generateSegmentFile() {
+    public fun generateSegmentFile(overwriteExisting: Boolean = false) {
         if (!isExporting.compareAndSet(false, true)) return
 
         viewModelScope.launch(ioDispatcher) {
@@ -595,7 +595,7 @@ public class VideoEditingViewModel @Inject constructor(
                     )
                 }
 
-                val result = useCases.generateSegmentFileUseCase.execute(projectData)
+                val result = useCases.generateSegmentFileUseCase.execute(projectData, overwriteExisting)
 
                 result.fold(
                     onSuccess = {

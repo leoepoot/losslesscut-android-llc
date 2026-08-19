@@ -119,9 +119,9 @@ class EditorFragment : BaseEditingFragment(R.layout.fragment_editor), SettingsBo
         exportOptionsController = com.tazztone.losslesscut.ui.editor.ExportOptionsDialogPresenter(
             requireContext(),
             layoutInflater
-        ) { exportType, keepAudio, keepVideo, mergeSegments, selectedTracks ->
+        ) { exportType, keepAudio, keepVideo, mergeSegments, selectedTracks, overwriteExistingLlc ->
             if (exportType == "llc") {
-                viewModel.generateSegmentFile()
+                viewModel.generateSegmentFile(overwriteExistingLlc)
             } else {
                 val rot = if (rotationManager.currentRotation != 0) rotationManager.currentRotation else null
                 val settings = ExportSettings(

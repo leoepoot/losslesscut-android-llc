@@ -130,6 +130,10 @@ class VideoEditingRepositoryImpl @Inject constructor(
         return storageUtils.findTextFileByName(fileName)?.toString()
     }
 
+    override suspend fun deleteTextFile(uri: String): Result<Unit> {
+        return storageUtils.deleteTextFile(android.net.Uri.parse(uri))
+    }
+
     override suspend fun writeTextFile(fileName: String, content: String): Result<String> = withContext(ioDispatcher) {
         try {
             val outputUri = storageUtils.createTextOutputUri(fileName, "application/json")

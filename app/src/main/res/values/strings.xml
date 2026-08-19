@@ -89,6 +89,7 @@
     <string name="export_success_audio">成功导出 %1$d 个音频片段到 Music/LosslessCut</string>
     <string name="audio_only_placeholder_desc">音频文件：%1$s</string>
     <string name="merge_keep_segments">合并所有保留片段为一个文件</string>
+    <string name="overwrite_existing_llc">覆盖已有同名工程文件</string>
     <string name="error_incompatible_format">片段 \"%1$s\" 格式不兼容，已跳过</string>
     <string name="error_no_valid_clips">没有导入有效的片段</string>
     <string name="clips_added">已添加 %1$d 个新片段</string>

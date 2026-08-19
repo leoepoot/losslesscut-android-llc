@@ -30,13 +30,15 @@ class ExportOptionsDialogPresenter(
         keepAudio: Boolean,
         keepVideo: Boolean,
         mergeSegments: Boolean,
-        selectedTracks: List<Int>?
+        selectedTracks: List<Int>?,
+        overwriteExistingLlc: Boolean
     ) -> Unit
 ) {
 
     fun show(state: VideoEditingUiState.Success) {
         val dialogView = layoutInflater.inflate(R.layout.dialog_export_options, null)
         val cbMergeSegments = dialogView.findViewById<CheckBox>(R.id.cbMergeSegments)
+        val cbOverwriteExistingLlc = dialogView.findViewById<CheckBox>(R.id.cbOverwriteExistingLlc)
 
         val radioGroup = buildExportTypeSelector(dialogView)
         setupMergeVisibility(cbMergeSegments, state)
@@ -45,6 +47,7 @@ class ExportOptionsDialogPresenter(
         radioGroup.setOnCheckedChangeListener { _, checkedId ->
             val isLlcMode = checkedId == radioGroup.getChildAt(1).id
             cbMergeSegments.visibility = if (isLlcMode) View.GONE else View.VISIBLE
+            cbOverwriteExistingLlc.visibility = if (isLlcMode) View.VISIBLE else View.GONE
             tvTracksHeader.visibility = if (isLlcMode) View.GONE else View.VISIBLE
             tracksContainer.visibility = if (isLlcMode) View.GONE else View.VISIBLE
         }
@@ -56,7 +59,7 @@ class ExportOptionsDialogPresenter(
                 val checkedId = radioGroup.checkedRadioButtonId
                 val isLlcMode = checkedId == radioGroup.getChildAt(1).id
                 if (isLlcMode) {
-                    onExport(EXPORT_TYPE_LLC, true, true, false, null)
+                    onExport(EXPORT_TYPE_LLC, true, true, false, null, cbOverwriteExistingLlc.isChecked)
                 } else {
                     handleExportClick(cbMergeSegments, state, selectedTracks)
                 }
@@ -213,7 +216,7 @@ class ExportOptionsDialogPresenter(
         }
 
         val mergeSegments = cbMerge.isChecked
-        onExport(EXPORT_TYPE_VIDEO, keepAudio, keepVideo, mergeSegments, trackList)
+        onExport(EXPORT_TYPE_VIDEO, keepAudio, keepVideo, mergeSegments, trackList, false)
 
     }
 }

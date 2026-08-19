@@ -62,13 +62,24 @@ public class GenerateSegmentFileUseCase @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
 
-    public suspend fun execute(projectData: LlcProjectData): Result<String> = withContext(ioDispatcher) {
+    public suspend fun execute(
+        projectData: LlcProjectData,
+        overwriteExisting: Boolean = false
+    ): Result<String> = withContext(ioDispatcher) {
         if (projectData.clips.isEmpty()) {
             return@withContext Result.failure(IllegalStateException("No media clips available"))
         }
 
-        val content = generateLlcContent(projectData)
         val fileName = deriveLlcFileName(projectData.clips.first().fileName)
+
+        if (overwriteExisting) {
+            val existingUri = repository.findTextFileByName(fileName)
+            if (existingUri != null) {
+                repository.deleteTextFile(existingUri)
+            }
+        }
+
+        val content = generateLlcContent(projectData)
         repository.writeTextFile(fileName, content)
     }
 

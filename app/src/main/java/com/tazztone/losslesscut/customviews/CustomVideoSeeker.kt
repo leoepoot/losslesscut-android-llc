@@ -278,7 +278,7 @@ open class CustomVideoSeeker @JvmOverloads constructor(
             val binaryIdx = keyframes.binarySearch(startTime)
             val startIdx = if (binaryIdx < 0) -(binaryIdx + 1) else binaryIdx
             
-            val minPxGap = 24f
+            val minPxGap = 12f
             var lastDrawnX = Float.NEGATIVE_INFINITY
 
             for (i in startIdx until keyframes.size) {
